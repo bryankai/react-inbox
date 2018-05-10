@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Toolbar from './components/Toolbar.js'
 import Messages from './components/Messages.js'
 import './App.css';
+
 import messagesData from './messagesData.json'
 console.log(messagesData);
 
@@ -26,7 +27,7 @@ class App extends Component {
   }
 
   handleMessageRead = (readStatus) => {
-    
+
   }
 
   render() {
