@@ -7,9 +7,12 @@ const Toolbar = ({
   messagesData,
   handleSelectAll,
   handleSelectAllIconChange,
+  handleSelectAllIconLoad,
   handleReadSelected,
   handleUnreadSelected,
-  handleDeleteSelected
+  handleDeleteSelected,
+  handleApplyLabel,
+  handleRemoveLabel
 }) => {
   // 3. Return some JSX
   return (
@@ -44,14 +47,22 @@ const Toolbar = ({
           Mark As Unread
         </button>
 
-        <select className="form-control label-select">
+        <select
+          className="form-control label-select"
+          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
+          onChange = {(event)=> handleApplyLabel(messagesData, event.target.value)}
+        >
           <option>Apply label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
           <option value="gschool">gschool</option>
         </select>
 
-        <select className="form-control label-select">
+        <select
+          className="form-control label-select"
+          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
+          onChange = {(event)=> handleRemoveLabel(messagesData, event.target.value)}
+        >
           <option>Remove label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
@@ -60,6 +71,7 @@ const Toolbar = ({
 
         <button
           className="btn btn-default"
+          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
           onClick={(event)=>handleDeleteSelected(messagesData)}
           >
           <i

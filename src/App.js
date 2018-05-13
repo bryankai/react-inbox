@@ -152,11 +152,51 @@ class App extends Component {
   }
 
   handleDeleteSelected= (messagesData) => {
+    console.log('selected to delete', messagesData)
     const newMessagesData = messagesData.filter((message)=> !message.selected)
     this.setState({
       ...this.state,
       messages: newMessagesData,
     })
+  }
+
+  handleApplyLabel = (messageData, label) => {
+    const newMessagesData = messagesData.map((message)=> {
+
+      if(message.selected) {
+        console.log(message)
+        if(!message.labels.some((ele)=> ele===label)) {
+          message.labels = [...message.labels, label]
+        } else {
+          console.log('label exists. do nothing')
+        }
+      }
+      return message
+    })
+    this.setState({
+      ...this.state,
+      messages: newMessagesData,
+    })
+  }
+
+  handleRemoveLabel = (messageData, label) => {
+    const newMessagesData = messagesData.map((message)=> {
+      console.log(message)
+      if(message.selected) {
+        // console.log(message)
+        if(message.labels.some((ele)=> ele===label)) {
+          const newLabels = message.labels.filter((ele)=> {ele===label})
+          console.log(newLabels)
+        } else {
+          console.log('label doesnt exist. do nothing')
+        }
+      }
+      return message
+    })
+    // this.setState({
+    //   ...this.state,
+    //   messages: newMessagesData,
+    // })
   }
 
   // Mounting Methods
@@ -175,9 +215,12 @@ class App extends Component {
             messagesData={this.state.messages}
             handleSelectAll={this.handleSelectAll}
             handleSelectAllIconChange={this.handleSelectAllIconChange}
+            handleSelectAllIconLoad={this.handleSelectAllIconLoad} // delete later?
             handleReadSelected={this.handleReadSelected}
             handleUnreadSelected={this.handleUnreadSelected}
             handleDeleteSelected={this.handleDeleteSelected}
+            handleApplyLabel={this.handleApplyLabel}
+            handleRemoveLabel={this.handleRemoveLabel}
           />
           <Messages
             messagesData={this.state.messages}
