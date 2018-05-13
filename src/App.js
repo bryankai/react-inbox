@@ -22,7 +22,8 @@ class App extends Component {
       //  },
       // ...]
       toolbar: {
-        selectAll: "none"     // all, some, none
+        selectAll: "none",     // all, some, none
+
       }
     }
   }
@@ -32,7 +33,7 @@ class App extends Component {
   handleSelected = (id, selected) => {
     // Changes the checkbox
     const newMessagesData = this.state.messages.map(ele => ele.id === id ? {...ele, selected} : {...ele})
-    this.setState({ messages: newMessagesData})
+    this.setState({ ...this.state, messages: newMessagesData})
   }
 
   handleStarred = (id, className) => {
@@ -41,17 +42,20 @@ class App extends Component {
     const starred = (className==="star fa fa-star-o") ? true : false
     const newMessagesData = this.state.messages.map(ele => ele.id === id ? {...ele, starred} : {...ele})
 
-    this.setState({ messages: newMessagesData})
-    console.log(this.state.messages)
+    this.setState({
+      ...this.state,
+      messages: newMessagesData,
+    })
   }
 
   handleSelectAllIconLoad = (messagesData,toolbarData) => {
     // Find out how many messages are selected
+    console.log(this.state)
+    console.log(messagesData)
     const selectCount = messagesData.reduce((acc, message) => {
       if (message.selected) acc++
       return acc
     }, 0)
-    console.log(selectCount, messagesData.length)
     let selected
     let classes
     // If no messages are selected
@@ -67,15 +71,13 @@ class App extends Component {
       selected='some'
       classes="fa fa-minus-square-o"
     }
-
-    console.log(this.state.toolbar.selectAll)
-    ////// Next few lines cause this function to continue to be called because
-    ////// the state is changesd
-    this.setState( {
-      messages: messagesData,
+    const newState = {
+      ...this.state, messages: messagesData,
       toolbar: {
-        selectAll: selected     // checked, halfchecked, unchecked
-      } } )
+        selectAll: selected,     // checked, halfchecked, unchecked
+      } }
+    this.setState(newState)
+
     return classes
   }
 
@@ -126,25 +128,60 @@ class App extends Component {
       messageSelected = false
       selected = 'none'
     }
-    this.setState( {
+    console.log(selected)
+
+    const newState = {
+      ...this.state,
       messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ),
-      toolbar: {selectAll: 'selected'}
-     } )
+      toolbar: {
+        selectAll: selected     // checked, halfchecked, unchecked
+      }
+    }
+    this.setState(newState)
   }
 
   test = (text) => {
     console.log(text)
   }
 
-  handleMessageRead = (readStatus) => {
+  handleReadSelected= (messagesData,toolbarData) => {
+    // const selectedMessages = messagesData.filter((message) => message.selected)
+    const selectedMessages = messagesData.map((message)=> {
+      console.log(message.selected)
+      message.read = message.selected ? true : message.read
+      return message
+    })
+    console.log(selectedMessages)
+    // let selected
+    // let classes
+    // // If no messages are selected
+    // if (selectCount===0) {
+    //   selected='none'
+    //   classes="fa fa-square-o"
+    // // If all messages are selected
+    // } else if (selectCount===messagesData.length) {
+    //   selected='all'
+    //   classes="fa fa-check-square-o"
+    // // If some messages are selected
+    // } else {
+    //   selected='some'
+    //   classes="fa fa-minus-square-o"
+    // }
+    const newState = {
+      ...this.state,
+      messages: selectedMessages,
+    }
+    this.setState(newState)
   }
 
   // Mounting Methods
   componentWillMount() {
-    console.log('CandidateList Will mount')
+    console.log('componentWillMount')
     this.handleSelectAllIconLoad(this.state.messages, this.state.toolbar)
+    // this.handleReadSelected(this.state.messages, this.state.toolbar)
   }
 
+  // Render
   render() {
     return (
       <div className="App">
@@ -154,7 +191,7 @@ class App extends Component {
             messagesData={this.state.messages}
             handleSelectAll={this.handleSelectAll}
             handleSelectAllIconChange={this.handleSelectAllIconChange}
-            test={this.test}
+            handleReadSelected={this.handleReadSelected}
           />
           <Messages
             messagesData={this.state.messages}

@@ -2,7 +2,13 @@
 import React from 'react'
 
 // 2. Create a function
-const Toolbar = ({toolbarData, messagesData, handleSelectAll, handleSelectAllIconChange, test}) => {
+const Toolbar = ({
+  toolbarData,
+  messagesData,
+  handleSelectAll,
+  handleSelectAllIconChange,
+  handleReadSelected
+}) => {
   // 3. Return some JSX
   return (
     <div className="row toolbar">
@@ -20,8 +26,13 @@ const Toolbar = ({toolbarData, messagesData, handleSelectAll, handleSelectAllIco
           </i>
         </button>
 
-        <button className="btn btn-default">
+        <button
+          className="btn btn-default"
+          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
+          onClick={(event)=>handleReadSelected(messagesData,toolbarData)}
+          >
           Mark As Read
+          {console.log(toolbarData.selectAll)}
         </button>
 
         <button className="btn btn-default">
