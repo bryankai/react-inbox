@@ -22,7 +22,7 @@ class App extends Component {
       //  },
       // ...]
       toolbar: {
-        selectAll: ""     // checked, halfchecked, unchecked
+        selectAll: "none"     // all, some, none
       }
     }
   }
@@ -114,32 +114,22 @@ class App extends Component {
   }
 
   handleSelectAll = (messagesData, toolbarData) => {
-    // console.log('selectAll!')
-    // this.setState( {
-    //   messages: this.state.messages.map(ele => ({...ele, selected: 'true' } ) ),
-    //   toolbar: toolbarData
-    // } )
+    let messageSelected
+    let selected
     if (toolbarData.selectAll==="none" || toolbarData.selectAll==="some") {
-      const messageSelected = true
-      // Change the button
-      // Render the message checkboxes
-      this.setState( {
-        messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ),
-        toolbar: {selectAll: 'all'}
-       } )
-      // // Render the toolbar checkbox
-      // this.setState( { toolbar: newSelectAll })
-
+      messageSelected = true
+      selected = 'all'
     } else if (toolbarData.selectAll==="all") {
-      const messageSelected = false
-      // update toolbar status
-      // third case
-      // Render the message checkboxes
-      this.setState( {
-        messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ),
-        toolbar: {selectAll: 'none'}
-       } )
+      messageSelected = false
+      selected = 'none'
+    } else {
+      messageSelected = false
+      selected = 'none'
     }
+    this.setState( {
+      messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ),
+      toolbar: {selectAll: 'selected'}
+     } )
   }
 
   test = (text) => {
