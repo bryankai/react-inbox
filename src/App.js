@@ -27,6 +27,8 @@ class App extends Component {
     }
   }
 
+
+
   handleSelected = (id, selected) => {
     // Changes the checkbox
     const newMessagesData = this.state.messages.map(ele => ele.id === id ? {...ele, selected} : {...ele})
@@ -43,52 +45,101 @@ class App extends Component {
     console.log(this.state.messages)
   }
 
+  handleSelectAllIconLoad = (messagesData,toolbarData) => {
+    // Find out how many messages are selected
+    const selectCount = messagesData.reduce((acc, message) => {
+      if (message.selected) acc++
+      return acc
+    }, 0)
+    console.log(selectCount, messagesData.length)
+    let selected
+    let classes
+    // If no messages are selected
+    if (selectCount===0) {
+      selected='none'
+      classes="fa fa-square-o"
+    // If all messages are selected
+    } else if (selectCount===messagesData.length) {
+      selected='all'
+      classes="fa fa-check-square-o"
+    // If some messages are selected
+    } else {
+      selected='some'
+      classes="fa fa-minus-square-o"
+    }
 
+    console.log(this.state.toolbar.selectAll)
+    ////// Next few lines cause this function to continue to be called because
+    ////// the state is changesd
+    this.setState( {
+      messages: messagesData,
+      toolbar: {
+        selectAll: selected     // checked, halfchecked, unchecked
+      } } )
+    return classes
+  }
 
   handleSelectAllIconChange = (messagesData,toolbarData) => {
     // Find out how many messages are selected
+    const selectCount = messagesData.reduce((acc, message) => {
+      if (message.selected) acc++
+      return acc
+    }, 0)
+    console.log(selectCount, messagesData.length)
+    let selected
+    let classes
+    // If no messages are selected
+    if (selectCount===0) {
+      selected='none'
+      classes="fa fa-square-o"
+    // If all messages are selected
+    } else if (selectCount===messagesData.length) {
+      selected='all'
+      classes="fa fa-check-square-o"
+    // If some messages are selected
+    } else {
+      selected='some'
+      classes="fa fa-minus-square-o"
+    }
 
-    // If all messages are selected, selectAll = "all"
-
-    // If all messages are selected, selectAll = "some"
-
-    // If all messages are selected, selectAll = "none"
-
-    // "fa fa-check-square-o"
-    // console.log('toolbarSelected',toolbarSelected)
-    // if(toolbarSelected==="some" || toolbarSelected==="some") {
-    //   toolbarSelected="all"
-    // } else {
-    //   toolbarSelected="none"
-    // }
-    if(toolbarData.selected==='')
-    this.setState( { toolbar: 'some' } )
+    console.log(this.state.toolbar.selectAll)
+    ////// Next few lines cause this function to continue to be called because
+    ////// the state is changesd
+    // this.setState( {
+    //   messages: messagesData,
+    //   toolbar: {
+    //     selectAll: selected     // checked, halfchecked, unchecked
+    //   } } )
+    return classes
   }
 
-  handleSelectAll = (messagesData) => {
-    console.log('selectAll!')
-    this.setState( { messages: this.state.messages.map(ele => ({...ele, selected: 'true' } ) ) } )
-    // if (toolbarSelected==="checked") {
-    //   const messageSelected = true
-    //   // Change the button
-    //   // Render the message checkboxes
-    //   this.setState( { checkbox: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ) } )
-    //   // Render the toolbar checkbox
-    //   this.setState( { toolbar: newSelectAll })
-    //
-    // } else if (toolbarSelected==="unchecked") {
-    //   const messageSelected = false
-    //   // update toolbar status
-    // } else {
-    //   // third case
-    //   // Render the message checkboxes
-    //   this.setState( { checkbox: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ) } )
-    //   // Render the toolbar checkbox
-    //   this.setState( { toolbar: newSelectAll
-    // }
-    //
-    //
-    // })
+  handleSelectAll = (messagesData, toolbarData) => {
+    // console.log('selectAll!')
+    // this.setState( {
+    //   messages: this.state.messages.map(ele => ({...ele, selected: 'true' } ) ),
+    //   toolbar: toolbarData
+    // } )
+    if (toolbarData.selectAll==="none" || toolbarData.selectAll==="some") {
+      const messageSelected = true
+      // Change the button
+      // Render the message checkboxes
+      this.setState( {
+        messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ),
+        toolbar: {selectAll: 'all'}
+       } )
+      // // Render the toolbar checkbox
+      // this.setState( { toolbar: newSelectAll })
+
+    } else if (toolbarData.selectAll==="all") {
+      const messageSelected = false
+      // update toolbar status
+      // third case
+      // Render the message checkboxes
+      this.setState( {
+        messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ),
+        toolbar: {selectAll: 'none'}
+       } )
+    }
   }
 
   test = (text) => {
@@ -98,16 +149,21 @@ class App extends Component {
   handleMessageRead = (readStatus) => {
   }
 
+  // Mounting Methods
+  componentWillMount() {
+    console.log('CandidateList Will mount')
+    this.handleSelectAllIconLoad(this.state.messages, this.state.toolbar)
+  }
+
   render() {
     return (
       <div className="App">
         <div className="container">
           <Toolbar
             toolbarData={this.state.toolbar}
-
             messagesData={this.state.messages}
             handleSelectAll={this.handleSelectAll}
-            // handleSelectAllIconChange={this.handleSelectAllIconChange}
+            handleSelectAllIconChange={this.handleSelectAllIconChange}
             test={this.test}
           />
           <Messages

@@ -14,14 +14,9 @@ const Toolbar = ({toolbarData, messagesData, handleSelectAll, handleSelectAllIco
 
         <button
           className="btn btn-default"
-          // onClick={(event)=> test(event.target)}
-          onClick={(event)=> handleSelectAll(messagesData)}
+          onClick={(event)=> handleSelectAll(messagesData, toolbarData)}
           >
-          <i
-            // className={handleSelectAllIconChange(messagesData, toolbarData)}
-
-          >
-
+          <i className={handleSelectAllIconChange(messagesData, toolbarData)}>
           </i>
         </button>
 
