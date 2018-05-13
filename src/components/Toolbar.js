@@ -2,7 +2,7 @@
 import React from 'react'
 
 // 2. Create a function
-const Toolbar = (props) => {
+const Toolbar = ({toolbarData, messagesData, handleSelectAll, handleSelectAllIconChange, test}) => {
   // 3. Return some JSX
   return (
     <div className="row toolbar">
@@ -12,8 +12,17 @@ const Toolbar = (props) => {
           unread messages
         </p>
 
-        <button className="btn btn-default">
-          <i className="fa fa-check-square-o"></i>
+        <button
+          className="btn btn-default"
+          // onClick={(event)=> test(event.target)}
+          onClick={(event)=> handleSelectAll(messagesData)}
+          >
+          <i
+            // className={handleSelectAllIconChange(messagesData, toolbarData)}
+
+          >
+
+          </i>
         </button>
 
         <button className="btn btn-default">
@@ -39,14 +48,15 @@ const Toolbar = (props) => {
         </select>
 
         <button className="btn btn-default">
-          <i className="fa fa-trash-o"></i>
+          <i
+            className="fa fa-trash-o"
+          >
+          </i>
         </button>
       </div>
     </div>
   )
 }
-
-
 
 // 4. export
 export default Toolbar

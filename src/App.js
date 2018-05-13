@@ -4,10 +4,6 @@ import Toolbar from './components/Toolbar.js'
 import Messages from './components/Messages.js'
 import './App.css';
 
-const toolbar = {
-  // selectAll: 'all'     // checked, half-checked, unchecked
-
-}
 
 class App extends Component {
   constructor(props){
@@ -25,7 +21,9 @@ class App extends Component {
       //    "labels": []
       //  },
       // ...]
-      toolbar: toolbar
+      toolbar: {
+        selectAll: ""     // checked, halfchecked, unchecked
+      }
     }
   }
 
@@ -45,8 +43,56 @@ class App extends Component {
     console.log(this.state.messages)
   }
 
-  handleToolbarCheckbox = (checked) => {
-    this.setState( { todoItems: this.state.toolbar.map(ele => ({...ele, checked } ) ) } )
+
+
+  handleSelectAllIconChange = (messagesData,toolbarData) => {
+    // Find out how many messages are selected
+
+    // If all messages are selected, selectAll = "all"
+
+    // If all messages are selected, selectAll = "some"
+
+    // If all messages are selected, selectAll = "none"
+
+    // "fa fa-check-square-o"
+    // console.log('toolbarSelected',toolbarSelected)
+    // if(toolbarSelected==="some" || toolbarSelected==="some") {
+    //   toolbarSelected="all"
+    // } else {
+    //   toolbarSelected="none"
+    // }
+    if(toolbarData.selected==='')
+    this.setState( { toolbar: 'some' } )
+  }
+
+  handleSelectAll = (messagesData) => {
+    console.log('selectAll!')
+    this.setState( { messages: this.state.messages.map(ele => ({...ele, selected: 'true' } ) ) } )
+    // if (toolbarSelected==="checked") {
+    //   const messageSelected = true
+    //   // Change the button
+    //   // Render the message checkboxes
+    //   this.setState( { checkbox: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ) } )
+    //   // Render the toolbar checkbox
+    //   this.setState( { toolbar: newSelectAll })
+    //
+    // } else if (toolbarSelected==="unchecked") {
+    //   const messageSelected = false
+    //   // update toolbar status
+    // } else {
+    //   // third case
+    //   // Render the message checkboxes
+    //   this.setState( { checkbox: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ) } )
+    //   // Render the toolbar checkbox
+    //   this.setState( { toolbar: newSelectAll
+    // }
+    //
+    //
+    // })
+  }
+
+  test = (text) => {
+    console.log(text)
   }
 
   handleMessageRead = (readStatus) => {
@@ -56,7 +102,14 @@ class App extends Component {
     return (
       <div className="App">
         <div className="container">
-          <Toolbar />
+          <Toolbar
+            toolbarData={this.state.toolbar}
+
+            messagesData={this.state.messages}
+            handleSelectAll={this.handleSelectAll}
+            // handleSelectAllIconChange={this.handleSelectAllIconChange}
+            test={this.test}
+          />
           <Messages
             messagesData={this.state.messages}
             handleSelected={this.handleSelected}
