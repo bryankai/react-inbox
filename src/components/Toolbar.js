@@ -8,7 +8,8 @@ const Toolbar = ({
   handleSelectAll,
   handleSelectAllIconChange,
   handleReadSelected,
-  handleUnreadSelected
+  handleUnreadSelected,
+  handleDeleteSelected
 }) => {
   // 3. Return some JSX
   return (
@@ -30,7 +31,7 @@ const Toolbar = ({
         <button
           className="btn btn-default"
           disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
-          onClick={(event)=>handleReadSelected(messagesData,toolbarData)}
+          onClick={(event)=>handleReadSelected(messagesData)}
           >
           Mark As Read
         </button>
@@ -38,7 +39,7 @@ const Toolbar = ({
         <button
           className="btn btn-default"
           disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
-          onClick={(event)=>handleUnreadSelected(messagesData,handleUnreadSelected)}
+          onClick={(event)=>handleUnreadSelected(messagesData)}
           >
           Mark As Unread
         </button>
@@ -57,7 +58,10 @@ const Toolbar = ({
           <option value="gschool">gschool</option>
         </select>
 
-        <button className="btn btn-default">
+        <button
+          className="btn btn-default"
+          onClick={(event)=>handleDeleteSelected(messagesData)}
+          >
           <i
             className="fa fa-trash-o"
           >

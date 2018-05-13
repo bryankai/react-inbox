@@ -129,7 +129,7 @@ class App extends Component {
     console.log(text)
   }
 
-  handleReadSelected= (messagesData,toolbarData) => {
+  handleReadSelected= (messagesData) => {
     const newMessagesData = messagesData.map((message)=> {
       message.read = message.selected ? true : message.read
       return message
@@ -140,11 +140,19 @@ class App extends Component {
     })
   }
 
-  handleUnreadSelected= (messagesData,toolbarData) => {
+  handleUnreadSelected= (messagesData) => {
     const newMessagesData = messagesData.map((message)=> {
       message.read = message.selected ? false : message.read
       return message
     })
+    this.setState({
+      ...this.state,
+      messages: newMessagesData,
+    })
+  }
+
+  handleDeleteSelected= (messagesData) => {
+    const newMessagesData = messagesData.filter((message)=> !message.selected)
     this.setState({
       ...this.state,
       messages: newMessagesData,
@@ -169,6 +177,7 @@ class App extends Component {
             handleSelectAllIconChange={this.handleSelectAllIconChange}
             handleReadSelected={this.handleReadSelected}
             handleUnreadSelected={this.handleUnreadSelected}
+            handleDeleteSelected={this.handleDeleteSelected}
           />
           <Messages
             messagesData={this.state.messages}
