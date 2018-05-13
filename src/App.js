@@ -77,7 +77,6 @@ class App extends Component {
         selectAll: selected,     // checked, halfchecked, unchecked
       } }
     this.setState(newState)
-
     return classes
   }
 
@@ -87,31 +86,17 @@ class App extends Component {
       if (message.selected) acc++
       return acc
     }, 0)
-    console.log(selectCount, messagesData.length)
-    let selected
     let classes
     // If no messages are selected
     if (selectCount===0) {
-      selected='none'
       classes="fa fa-square-o"
     // If all messages are selected
     } else if (selectCount===messagesData.length) {
-      selected='all'
       classes="fa fa-check-square-o"
     // If some messages are selected
     } else {
-      selected='some'
       classes="fa fa-minus-square-o"
     }
-
-    console.log(this.state.toolbar.selectAll)
-    ////// Next few lines cause this function to continue to be called because
-    ////// the state is changesd
-    // this.setState( {
-    //   messages: messagesData,
-    //   toolbar: {
-    //     selectAll: selected     // checked, halfchecked, unchecked
-    //   } } )
     return classes
   }
 
@@ -145,40 +130,31 @@ class App extends Component {
   }
 
   handleReadSelected= (messagesData,toolbarData) => {
-    // const selectedMessages = messagesData.filter((message) => message.selected)
-    const selectedMessages = messagesData.map((message)=> {
-      console.log(message.selected)
+    const newMessagesData = messagesData.map((message)=> {
       message.read = message.selected ? true : message.read
       return message
     })
-    console.log(selectedMessages)
-    // let selected
-    // let classes
-    // // If no messages are selected
-    // if (selectCount===0) {
-    //   selected='none'
-    //   classes="fa fa-square-o"
-    // // If all messages are selected
-    // } else if (selectCount===messagesData.length) {
-    //   selected='all'
-    //   classes="fa fa-check-square-o"
-    // // If some messages are selected
-    // } else {
-    //   selected='some'
-    //   classes="fa fa-minus-square-o"
-    // }
-    const newState = {
+    this.setState({
       ...this.state,
-      messages: selectedMessages,
-    }
-    this.setState(newState)
+      messages: newMessagesData,
+    })
+  }
+
+  handleUnreadSelected= (messagesData,toolbarData) => {
+    const newMessagesData = messagesData.map((message)=> {
+      message.read = message.selected ? false : message.read
+      return message
+    })
+    this.setState({
+      ...this.state,
+      messages: newMessagesData,
+    })
   }
 
   // Mounting Methods
   componentWillMount() {
     console.log('componentWillMount')
     this.handleSelectAllIconLoad(this.state.messages, this.state.toolbar)
-    // this.handleReadSelected(this.state.messages, this.state.toolbar)
   }
 
   // Render
@@ -192,6 +168,7 @@ class App extends Component {
             handleSelectAll={this.handleSelectAll}
             handleSelectAllIconChange={this.handleSelectAllIconChange}
             handleReadSelected={this.handleReadSelected}
+            handleUnreadSelected={this.handleUnreadSelected}
           />
           <Messages
             messagesData={this.state.messages}

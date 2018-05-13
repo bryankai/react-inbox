@@ -7,7 +7,8 @@ const Toolbar = ({
   messagesData,
   handleSelectAll,
   handleSelectAllIconChange,
-  handleReadSelected
+  handleReadSelected,
+  handleUnreadSelected
 }) => {
   // 3. Return some JSX
   return (
@@ -32,10 +33,13 @@ const Toolbar = ({
           onClick={(event)=>handleReadSelected(messagesData,toolbarData)}
           >
           Mark As Read
-          {console.log(toolbarData.selectAll)}
         </button>
 
-        <button className="btn btn-default">
+        <button
+          className="btn btn-default"
+          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
+          onClick={(event)=>handleUnreadSelected(messagesData,handleUnreadSelected)}
+          >
           Mark As Unread
         </button>
 
