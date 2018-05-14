@@ -21,14 +21,8 @@ class App extends Component {
       //    "labels": []
       //  },
       // ...]
-      toolbar: {
-        selectAll: "none",     // all, some, none
-
-      }
     }
   }
-
-
 
   handleSelected = (id, selected) => {
     // Changes the checkbox
@@ -46,87 +40,27 @@ class App extends Component {
       ...this.state,
       messages: newMessagesData,
     })
+    console.log(this.state);
   }
 
-  handleSelectAllIconLoad = (messagesData,toolbarData) => {
-    // Find out how many messages are selected
-    console.log(this.state)
-    console.log(messagesData)
-    const selectCount = messagesData.reduce((acc, message) => {
-      if (message.selected) acc++
-      return acc
-    }, 0)
-    let selected
-    let classes
-    // If no messages are selected
-    if (selectCount===0) {
-      selected='none'
-      classes="fa fa-square-o"
-    // If all messages are selected
-    } else if (selectCount===messagesData.length) {
-      selected='all'
-      classes="fa fa-check-square-o"
-    // If some messages are selected
-    } else {
-      selected='some'
-      classes="fa fa-minus-square-o"
-    }
-    const newState = {
-      ...this.state, messages: messagesData,
-      toolbar: {
-        selectAll: selected,     // checked, halfchecked, unchecked
-      } }
-    this.setState(newState)
-    return classes
-  }
 
-  handleSelectAllIconChange = (messagesData,toolbarData) => {
-    // Find out how many messages are selected
-    const selectCount = messagesData.reduce((acc, message) => {
-      if (message.selected) acc++
-      return acc
-    }, 0)
-    let classes
-    // If no messages are selected
-    if (selectCount===0) {
-      classes="fa fa-square-o"
-    // If all messages are selected
-    } else if (selectCount===messagesData.length) {
-      classes="fa fa-check-square-o"
-    // If some messages are selected
-    } else {
-      classes="fa fa-minus-square-o"
-    }
-    return classes
-  }
-
-  handleSelectAll = (messagesData, toolbarData) => {
+  handleSelectAll = (selectedMessages,messagesData) => {
     let messageSelected
-    let selected
-    if (toolbarData.selectAll==="none" || toolbarData.selectAll==="some") {
+    // If no messages are selected
+    if (selectedMessages.length===0) {
       messageSelected = true
-      selected = 'all'
-    } else if (toolbarData.selectAll==="all") {
+    // If all messages are selected
+    } else if (selectedMessages.length===messagesData.length) {
       messageSelected = false
-      selected = 'none'
+    // If some messages are selected
     } else {
-      messageSelected = false
-      selected = 'none'
+      messageSelected = true
     }
-    console.log(selected)
-
     const newState = {
       ...this.state,
-      messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) ),
-      toolbar: {
-        selectAll: selected     // checked, halfchecked, unchecked
-      }
+      messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) )
     }
     this.setState(newState)
-  }
-
-  test = (text) => {
-    console.log(text)
   }
 
   handleReadSelected= (messagesData) => {
@@ -160,62 +94,58 @@ class App extends Component {
     })
   }
 
-  handleApplyLabel = (messageData, label) => {
-    const newMessagesData = messagesData.map((message)=> {
-
-      if(message.selected) {
-        console.log(message)
+  handleApplyLabel = (label) => {
+    const newMessagesData = this.state.messages.map((message)=> {
+      if(message.selected)
+        // If the selected message does not have the label, add it
         if(!message.labels.some((ele)=> ele===label)) {
           message.labels = [...message.labels, label]
-        } else {
-          console.log('label exists. do nothing')
         }
+      return message
+    })
+    this.setState({
+      ...this.state,
+      messages: newMessagesData
+    })
+  }
+
+  handleRemoveLabel = (labelToRemove) => {
+    const newMessagesData = this.state.messages.map((message)=> {
+      if(message.selected) {
+        // If message has the label, then remove the label
+        const newLabels = message.labels.filter(label => {
+          return label !== labelToRemove})
+        message.labels = newLabels
       }
       return message
     })
     this.setState({
       ...this.state,
-      messages: newMessagesData,
+      messages: newMessagesData
     })
-  }
-
-  handleRemoveLabel = (messageData, label) => {
-    const newMessagesData = messagesData.map((message)=> {
-      console.log(message)
-      if(message.selected) {
-        // console.log(message)
-        if(message.labels.some((ele)=> ele===label)) {
-          const newLabels = message.labels.filter((ele)=> {ele===label})
-          console.log(newLabels)
-        } else {
-          console.log('label doesnt exist. do nothing')
-        }
-      }
-      return message
-    })
-    // this.setState({
-    //   ...this.state,
-    //   messages: newMessagesData,
-    // })
   }
 
   // Mounting Methods
   componentWillMount() {
     console.log('componentWillMount')
-    this.handleSelectAllIconLoad(this.state.messages, this.state.toolbar)
   }
 
   // Render
   render() {
+    const selectedMessages = (this.state.messages ?
+      this.state.messages.filter(message => message.selected) :
+      this.state.messages)
+    const unreadMessages = (this.state.messages ?
+      this.state.messages.filter(message => !message.read) :
+      this.state.messages)
     return (
       <div className="App">
         <div className="container">
           <Toolbar
-            toolbarData={this.state.toolbar}
+            selectedMessages={selectedMessages}
+            unreadMessages={unreadMessages}
             messagesData={this.state.messages}
             handleSelectAll={this.handleSelectAll}
-            handleSelectAllIconChange={this.handleSelectAllIconChange}
-            handleSelectAllIconLoad={this.handleSelectAllIconLoad} // delete later?
             handleReadSelected={this.handleReadSelected}
             handleUnreadSelected={this.handleUnreadSelected}
             handleDeleteSelected={this.handleDeleteSelected}

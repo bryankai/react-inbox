@@ -3,11 +3,10 @@ import React from 'react'
 
 // 2. Create a function
 const Toolbar = ({
-  toolbarData,
+  selectedMessages,
+  unreadMessages,
   messagesData,
   handleSelectAll,
-  handleSelectAllIconChange,
-  handleSelectAllIconLoad,
   handleReadSelected,
   handleUnreadSelected,
   handleDeleteSelected,
@@ -19,21 +18,21 @@ const Toolbar = ({
     <div className="row toolbar">
       <div className="col-md-12">
         <p className="pull-right">
-          <span className="badge badge">2</span>
+          <span className="badge badge">{unreadMessages.length}</span>
           unread messages
         </p>
 
         <button
           className="btn btn-default"
-          onClick={(event)=> handleSelectAll(messagesData, toolbarData)}
+          onClick={(event)=> handleSelectAll(selectedMessages, messagesData)}
           >
-          <i className={handleSelectAllIconChange(messagesData, toolbarData)}>
+          <i className={selectAllIcon(selectedMessages,messagesData)}>
           </i>
         </button>
 
         <button
           className="btn btn-default"
-          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
+          disabled = {selectedMessages.length===0 ? 'disabled' : false}
           onClick={(event)=>handleReadSelected(messagesData)}
           >
           Mark As Read
@@ -41,7 +40,7 @@ const Toolbar = ({
 
         <button
           className="btn btn-default"
-          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
+          disabled = {selectedMessages.length===0 ? 'disabled' : false}
           onClick={(event)=>handleUnreadSelected(messagesData)}
           >
           Mark As Unread
@@ -49,8 +48,8 @@ const Toolbar = ({
 
         <select
           className="form-control label-select"
-          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
-          onChange = {(event)=> handleApplyLabel(messagesData, event.target.value)}
+          disabled = {selectedMessages.length===0 ? 'disabled' : false}
+          onChange = {(event)=> handleApplyLabel(event.target.value)}
         >
           <option>Apply label</option>
           <option value="dev">dev</option>
@@ -60,8 +59,8 @@ const Toolbar = ({
 
         <select
           className="form-control label-select"
-          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
-          onChange = {(event)=> handleRemoveLabel(messagesData, event.target.value)}
+          disabled = {selectedMessages.length===0 ? 'disabled' : false}
+          onChange = {(event)=> handleRemoveLabel(event.target.value)}
         >
           <option>Remove label</option>
           <option value="dev">dev</option>
@@ -71,7 +70,7 @@ const Toolbar = ({
 
         <button
           className="btn btn-default"
-          disabled = {toolbarData.selectAll==='none' ? 'disabled' : false}
+          disabled = {selectedMessages.length===0 ? 'disabled' : false}
           onClick={(event)=>handleDeleteSelected(messagesData)}
           >
           <i
@@ -82,6 +81,23 @@ const Toolbar = ({
       </div>
     </div>
   )
+}
+
+// Concatonates classes
+const selectAllIcon = (selectedMessages,messagesData) => {
+    // Find out how many messages are selected
+    let classes
+    // If no messages are selected
+    if (selectedMessages.length===0) {
+      classes="fa fa-square-o"
+    // If all messages are selected
+    } else if (selectedMessages.length===messagesData.length) {
+      classes="fa fa-check-square-o"
+    // If some messages are selected
+    } else {
+      classes="fa fa-minus-square-o"
+    }
+    return classes
 }
 
 // 4. export
