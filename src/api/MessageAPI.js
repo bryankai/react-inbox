@@ -8,8 +8,8 @@ class MessageAPI {
   static post(body) {
     return axios.post(url, body)
   }
-  static put(id, body) {
-    return axios.put(`${url}/${id}`, body)
+  static patch(body) {
+    return axios.patch(url, body)
   }
 }
 

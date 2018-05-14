@@ -26,16 +26,12 @@ class App extends Component {
   }
 
   // Update State with getAll Messages
-  updateState = async() => {
+  updateState = async () => {
     //Async and await so we can setState AFTER we get the data
     const messageResponse = await MessageAPI.get()
-    const messages = messageResponse.data
-    await this.setState({ messages })
+    this.setState({ messages: await messageResponse.data })
   }
 
-  putMessage = () => {
-
-  }
 
   // Mounting Methods
   componentWillMount = () => {
@@ -53,19 +49,9 @@ class App extends Component {
     // this.updateState()
   }
 
-  handleStarred = async (id, className) => {
-    console.log('clicked')
-    console.log(className)
-    const starred = (className==="star fa fa-star-o") ? true : false
-    const newMessagesData = this.state.messages.map(ele => ele.id === id ? {...ele, starred} : {...ele})
-
-    // await this.putMessage(newMessageData)
-    this.setState({
-      ...this.state,
-      messages: newMessagesData,
-    })
-    console.log(this.state);
-    // await this.updateState()
+  handleStarred = async (id) => {
+    await MessageAPI.patch({messageIds:[id], command:"star"})
+    this.updateState()
   }
 
   //////////////////////////
@@ -90,33 +76,26 @@ class App extends Component {
     this.setState(newState)
   }
 
-  handleReadSelected= () => {
-    const newMessagesData = this.state.messages.map((message)=> {
-      message.read = message.selected ? true : message.read
-      return message
-    })
-    this.setState({
-      messages: newMessagesData,
-    })
+  handleReadSelected= async (selectedMessages) => {
+    const selectedIds = selectedMessages.map(message => message.id)
+    console.log(selectedIds)
+    await MessageAPI.patch({messageIds:selectedIds, command:"read", read:true})
+    this.updateState()
   }
 
-  handleUnreadSelected= () => {
-    const newMessagesData = this.state.messages.map((message)=> {
-      message.read = message.selected ? false : message.read
-      return message
-    })
-    this.setState({
-      messages: newMessagesData,
-    })
+  handleUnreadSelected= async (selectedMessages) => {
+    const selectedIds = selectedMessages.map(message => message.id)
+    await MessageAPI.patch({messageIds:selectedIds, command:"read", read:false})
+    this.updateState()
   }
 
-  handleDeleteSelected= () => {
-    const newMessagesData = this.state.messages.filter((message)=> !message.selected)
-    this.setState({
-      messages: newMessagesData,
-    })
+  handleDeleteSelected= async (selectedMessages) => {
+    const selectedIds = selectedMessages.map(message => message.id)
+    await MessageAPI.patch({messageIds:selectedIds, command:"delete"})
+    this.updateState()
   }
 
+  // Need to add API routes
   handleApplyLabel = (selectedlabel) => {
     const newMessagesData = this.state.messages.map((message)=> {
       if(message.selected)
@@ -130,7 +109,7 @@ class App extends Component {
       messages: newMessagesData
     })
   }
-
+  // Need to add API routes
   handleRemoveLabel = (labelToRemove) => {
     const newMessagesData = this.state.messages.map((message)=> {
       if(message.selected) {

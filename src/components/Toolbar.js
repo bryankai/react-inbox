@@ -33,7 +33,7 @@ const Toolbar = ({
         <button
           className="btn btn-default"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}
-          onClick={(event)=>handleReadSelected(messagesData)}
+          onClick={(event)=>handleReadSelected(selectedMessages)}
           >
           Mark As Read
         </button>
@@ -41,7 +41,7 @@ const Toolbar = ({
         <button
           className="btn btn-default"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}
-          onClick={(event)=>handleUnreadSelected(messagesData)}
+          onClick={(event)=>handleUnreadSelected(selectedMessages)}
           >
           Mark As Unread
         </button>
@@ -71,7 +71,7 @@ const Toolbar = ({
         <button
           className="btn btn-default"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}
-          onClick={(event)=>handleDeleteSelected(messagesData)}
+          onClick={(event)=>handleDeleteSelected(selectedMessages)}
           >
           <i
             className="fa fa-trash-o"
