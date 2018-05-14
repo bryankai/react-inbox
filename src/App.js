@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import messagesData from './messagesData.json'
+// import messagesData from './messagesData.json'
 import Toolbar from './components/Toolbar.js'
 import Messages from './components/Messages.js'
+import MessageAPI from './api/MessageAPI'
 import './App.css';
 
 
@@ -10,7 +11,7 @@ class App extends Component {
     super(props)
 
     this.state = {
-      messages: messagesData,  // Setting the state to be the current todo list
+      messages: [],  // Setting the state to be the current todo list
       // [...
       //  {
       //    "id": 4,
@@ -24,87 +25,108 @@ class App extends Component {
     }
   }
 
+  // Update State with getAll Messages
+  updateState = async() => {
+    //Async and await so we can setState AFTER we get the data
+    const messageResponse = await MessageAPI.get()
+    const messages = messageResponse.data
+    await this.setState({ messages })
+  }
+
+  putMessage = () => {
+
+  }
+
+  // Mounting Methods
+  componentWillMount = () => {
+    this.updateState()
+  }
+
+
+
+// Don't need to store this in the DB
   handleSelected = (id, selected) => {
     // Changes the checkbox
     const newMessagesData = this.state.messages.map(ele => ele.id === id ? {...ele, selected} : {...ele})
+    // MessageAPI.put(id, newMessagesData)
     this.setState({ ...this.state, messages: newMessagesData})
+    // this.updateState()
   }
 
-  handleStarred = (id, className) => {
+  handleStarred = async (id, className) => {
     console.log('clicked')
     console.log(className)
     const starred = (className==="star fa fa-star-o") ? true : false
     const newMessagesData = this.state.messages.map(ele => ele.id === id ? {...ele, starred} : {...ele})
 
+    // await this.putMessage(newMessageData)
     this.setState({
       ...this.state,
       messages: newMessagesData,
     })
     console.log(this.state);
+    // await this.updateState()
   }
 
+  //////////////////////////
+  // METHODS FOR TOOLBAR ///
+  //////////////////////////
 
-  handleSelectAll = (selectedMessages,messagesData) => {
+  handleSelectAll = (selectedMessages) => {
     let messageSelected
     // If no messages are selected
     if (selectedMessages.length===0) {
       messageSelected = true
     // If all messages are selected
-    } else if (selectedMessages.length===messagesData.length) {
+    } else if (selectedMessages.length===this.state.messages.length) {
       messageSelected = false
     // If some messages are selected
     } else {
       messageSelected = true
     }
     const newState = {
-      ...this.state,
       messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) )
     }
     this.setState(newState)
   }
 
-  handleReadSelected= (messagesData) => {
-    const newMessagesData = messagesData.map((message)=> {
+  handleReadSelected= () => {
+    const newMessagesData = this.state.messages.map((message)=> {
       message.read = message.selected ? true : message.read
       return message
     })
     this.setState({
-      ...this.state,
       messages: newMessagesData,
     })
   }
 
-  handleUnreadSelected= (messagesData) => {
-    const newMessagesData = messagesData.map((message)=> {
+  handleUnreadSelected= () => {
+    const newMessagesData = this.state.messages.map((message)=> {
       message.read = message.selected ? false : message.read
       return message
     })
     this.setState({
-      ...this.state,
       messages: newMessagesData,
     })
   }
 
-  handleDeleteSelected= (messagesData) => {
-    console.log('selected to delete', messagesData)
-    const newMessagesData = messagesData.filter((message)=> !message.selected)
+  handleDeleteSelected= () => {
+    const newMessagesData = this.state.messages.filter((message)=> !message.selected)
     this.setState({
-      ...this.state,
       messages: newMessagesData,
     })
   }
 
-  handleApplyLabel = (label) => {
+  handleApplyLabel = (selectedlabel) => {
     const newMessagesData = this.state.messages.map((message)=> {
       if(message.selected)
         // If the selected message does not have the label, add it
-        if(!message.labels.some((ele)=> ele===label)) {
-          message.labels = [...message.labels, label]
+        if(!message.labels.some((label)=> label===selectedlabel)) {
+          message.labels = [...message.labels, selectedlabel]
         }
       return message
     })
     this.setState({
-      ...this.state,
       messages: newMessagesData
     })
   }
@@ -120,14 +142,13 @@ class App extends Component {
       return message
     })
     this.setState({
-      ...this.state,
       messages: newMessagesData
     })
   }
 
-  // Mounting Methods
-  componentWillMount() {
-    console.log('componentWillMount')
+  // Create a new message
+  handleComposeMessage = () => {
+
   }
 
   // Render
