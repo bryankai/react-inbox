@@ -5,7 +5,7 @@ import Message from './Message.js'
 // 2. Create a function
 const Messages = ({messagesData, handleSelected, handleStarred}) => {
   // console.log(messagesData)
-  const messagesList = messagesData.map(message => {
+  const messagesList = messagesData.reverse().map(message => {
     return <Message
       key={message.id}
       message={message}

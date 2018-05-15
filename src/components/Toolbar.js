@@ -3,9 +3,10 @@ import React from 'react'
 
 // 2. Create a function
 const Toolbar = ({
+  displayComposeForm,
   selectedMessages,
   unreadMessages,
-  messagesData,
+  handleComposeFormToggle,
   handleSelectAll,
   handleReadSelected,
   handleUnreadSelected,
@@ -22,14 +23,24 @@ const Toolbar = ({
           unread messages
         </p>
 
+        {/* Compose Button */}
+        <a
+          className="btn btn-danger"
+          onClick={()=> handleComposeFormToggle()}
+          >
+          <i className="fa fa-plus"></i>
+        </a>
+
+        {/* Select All Button */}
         <button
           className="btn btn-default"
-          onClick={(event)=> handleSelectAll(selectedMessages, messagesData)}
+          onClick={(event)=> handleSelectAll(selectedMessages)}
           >
-          <i className={selectAllIcon(selectedMessages,messagesData)}>
+          <i className={selectAllIcon(selectedMessages)}>
           </i>
         </button>
 
+        {/* Mark as Read */}
         <button
           className="btn btn-default"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}
@@ -38,6 +49,7 @@ const Toolbar = ({
           Mark As Read
         </button>
 
+        {/* Mark as Unread */}
         <button
           className="btn btn-default"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}
@@ -46,6 +58,7 @@ const Toolbar = ({
           Mark As Unread
         </button>
 
+        {/* Apply Label */}
         <select
           className="form-control label-select"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}
@@ -57,6 +70,7 @@ const Toolbar = ({
           <option value="gschool">gschool</option>
         </select>
 
+        {/* Remove Label */}
         <select
           className="form-control label-select"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}
@@ -68,6 +82,7 @@ const Toolbar = ({
           <option value="gschool">gschool</option>
         </select>
 
+        {/* Delete */}
         <button
           className="btn btn-default"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}

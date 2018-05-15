@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 // import messagesData from './messagesData.json'
 import Toolbar from './components/Toolbar.js'
+import ComposeForm from './components/ComposeForm.js'
 import Messages from './components/Messages.js'
 import MessageAPI from './api/MessageAPI'
 import './App.css';
@@ -11,6 +12,7 @@ class App extends Component {
     super(props)
 
     this.state = {
+      composeFormDisplayed: false,
       messages: [],  // Setting the state to be the current todo list
       // [...
       //  {
@@ -45,7 +47,7 @@ class App extends Component {
     // Changes the checkbox
     const newMessagesData = this.state.messages.map(ele => ele.id === id ? {...ele, selected} : {...ele})
     // MessageAPI.put(id, newMessagesData)
-    this.setState({ ...this.state, messages: newMessagesData})
+    this.setState({messages: newMessagesData})
     // this.updateState()
   }
 
@@ -108,9 +110,19 @@ class App extends Component {
     this.updateState()
   }
 
-  // Create a new message
-  handleComposeMessage = () => {
+  // Display Compose Form
+  handleComposeFormToggle = () => {
+    this.setState({composeFormDisplayed: !this.state.composeFormDisplayed})
+  }
 
+  // Create a New Message
+  handleComposeMessage = async (event) => {
+    const {subject, body} = event.target
+    event.preventDefault();
+    console.log(subject.value, body.value)
+    await MessageAPI.post({subject: subject.value, body: body.value})
+    this.updateState()
+    this.setState({ composeFormDisplayed: false })
   }
 
   // Render
@@ -121,6 +133,7 @@ class App extends Component {
     const unreadMessages = (this.state.messages ?
       this.state.messages.filter(message => !message.read) :
       this.state.messages)
+    console.log(this.state)
     return (
       <div className="App">
         <div className="container">
@@ -128,6 +141,7 @@ class App extends Component {
             selectedMessages={selectedMessages}
             unreadMessages={unreadMessages}
             messagesData={this.state.messages}
+            handleComposeFormToggle={this.handleComposeFormToggle}
             handleSelectAll={this.handleSelectAll}
             handleReadSelected={this.handleReadSelected}
             handleUnreadSelected={this.handleUnreadSelected}
@@ -135,6 +149,11 @@ class App extends Component {
             handleApplyLabel={this.handleApplyLabel}
             handleRemoveLabel={this.handleRemoveLabel}
           />
+          {this.state.composeFormDisplayed ?
+            <ComposeForm
+              handleComposeMessage={this.handleComposeMessage}
+            />
+            : null}
           <Messages
             messagesData={this.state.messages}
             handleSelected={this.handleSelected}
