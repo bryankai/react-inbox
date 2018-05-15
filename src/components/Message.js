@@ -1,8 +1,6 @@
-// 1. import React
 import React from 'react'
 import Label from './Label.js'
 
-// 2. Create a function
 const Message = (props) => {
   const {message, handleSelected, handleStarred} = props
   const {id, subject, read, starred, selected, labels} = message
@@ -28,7 +26,6 @@ const Message = (props) => {
               className={starred ? "star fa fa-star" : "star fa fa-star-o"}
               onClick = {(event) => handleStarred(id, event.target.className)}
             >
-
             </i>
           </div>
         </div>
@@ -51,6 +48,4 @@ function messageStyling(read, selected) {
   return [...staticClass, readClass, selectedClass].join(' ')
 }
 
-
-// 4. export
 export default Message

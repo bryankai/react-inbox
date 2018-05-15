@@ -1,7 +1,5 @@
-// 1. import React
 import React from 'react'
 
-// 2. Create a function
 const Label = ({label}) => {
   return (
      <span className="label label-warning">
@@ -10,6 +8,4 @@ const Label = ({label}) => {
   )
 }
 
-
-// 4. export
 export default Label

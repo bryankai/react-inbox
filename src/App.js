@@ -13,7 +13,8 @@ class App extends Component {
 
     this.state = {
       composeFormDisplayed: false,
-      messages: [],  // Setting the state to be the current todo list
+      messages: [],
+      // Message Format:
       // [...
       //  {
       //    "id": 4,
@@ -27,86 +28,108 @@ class App extends Component {
     }
   }
 
-  // Update State with getAll Messages
+  //////////////////////////
+  ///// HELPER METHODS /////
+  //////////////////////////
+
+  // Update State with messages from server
   updateState = async () => {
     //Async and await so we can setState AFTER we get the data
     const messageResponse = await MessageAPI.get()
-    this.setState({ messages: await messageResponse.data })
+    // Reverse changes the order of the messages so that the newest message is on top.
+    this.setState({ messages: await messageResponse.data.reverse() })
+  }
+
+  // Returns description of how many messages are selected ('none', 'all', or 'some')
+  amountOfSelectedMessages = () => {
+    // If no messages are selected
+    if (this.state.messages.every(ele => !ele.selected)) {
+        return 'none'
+    // If all messages are selected
+    } else if (this.state.messages.every(ele => ele.selected)) {
+        return 'all'
+    // If some messages are selected
+    } else{
+        return 'some'
+      }
+  }
+
+  // Returns array of Selected Ids
+  getSelectedIds = () => {
+    return this.state.messages.filter(message => message.selected).map(message => message.id)
+  }
+
+  // Returns array of Unread Messages
+  getUnreadMessages = () => {
+    return this.state.messages.filter(message =>!message.read)
   }
 
 
-  // Mounting Methods
+  //////////////////////
+  // MOUNTING METHODS //
+  //////////////////////
   componentWillMount = () => {
     this.updateState()
   }
 
 
+  /////////////////////
+  // Message Methods //
+  /////////////////////
 
-// Don't need to store this in the DB
+  // Checkmarks the selected checkbox
   handleSelected = (id, selected) => {
-    // Changes the checkbox
     const newMessagesData = this.state.messages.map(ele => ele.id === id ? {...ele, selected} : {...ele})
-    // MessageAPI.put(id, newMessagesData)
+    // Change the state.  Don't need to update the server data.
     this.setState({messages: newMessagesData})
-    // this.updateState()
   }
 
+  // Star a message
   handleStarred = async (id) => {
     await MessageAPI.patch({messageIds:[id], command:"star"})
     this.updateState()
   }
 
+
   //////////////////////////
   // METHODS FOR TOOLBAR ///
   //////////////////////////
 
-  handleSelectAll = (selectedMessages) => {
-    let messageSelected
-    // If no messages are selected
-    if (selectedMessages.length===0) {
-      messageSelected = true
-    // If all messages are selected
-    } else if (selectedMessages.length===this.state.messages.length) {
-      messageSelected = false
-    // If some messages are selected
-    } else {
-      messageSelected = true
-    }
-    const newState = {
-      messages: this.state.messages.map(ele => ({...ele, selected: messageSelected } ) )
-    }
+  // Select All Button
+  handleSelectAll = () => {
+    // Select All unless All are selected
+    const selected = this.amountOfSelectedMessages()!=='all'
+    const newState = { messages: this.state.messages.map(ele => ({...ele, selected: selected } ) ) }
     this.setState(newState)
   }
 
-  handleReadSelected= async (selectedMessages) => {
-    const selectedIds = selectedMessages.map(message => message.id)
-    console.log(selectedIds)
-    await MessageAPI.patch({messageIds:selectedIds, command:"read", read:true})
+  // Mark as Read Button
+  handleReadSelected = async () => {
+    await MessageAPI.patch({messageIds: this.getSelectedIds(), command:"read", read:true})
     this.updateState()
   }
 
-  handleUnreadSelected= async (selectedMessages) => {
-    const selectedIds = selectedMessages.map(message => message.id)
-    await MessageAPI.patch({messageIds:selectedIds, command:"read", read:false})
+  // Mark as Unread Button
+  handleUnreadSelected = async () => {
+    await MessageAPI.patch({messageIds: this.getSelectedIds(), command:"read", read:false})
     this.updateState()
   }
 
-  handleDeleteSelected= async (selectedMessages) => {
-    const selectedIds = selectedMessages.map(message => message.id)
-    await MessageAPI.patch({messageIds:selectedIds, command:"delete"})
+  // Delete Message Button
+  handleDeleteSelected = async () => {
+    await MessageAPI.patch({messageIds: this.getSelectedIds(), command:"delete"})
     this.updateState()
   }
 
-  // Need to add API routes
-  handleApplyLabel = async (selectedMessages, selectedLabel) => {
-    const selectedIds = selectedMessages.map(message => message.id)
-    await MessageAPI.patch({messageIds:selectedIds, command: "addLabel", label: selectedLabel})
+  // Apply Label Button
+  handleApplyLabel = async (selectedLabel) => {
+    await MessageAPI.patch({messageIds: this.getSelectedIds(), command: "addLabel", label: selectedLabel})
     this.updateState()
   }
-  // Need to add API routes
-  handleRemoveLabel = async (selectedMessages, labelToRemove) => {
-    const selectedIds = selectedMessages.map(message => message.id)
-    await MessageAPI.patch({messageIds:selectedIds, command: "removeLabel", label: labelToRemove})
+
+  // Remove Label Button
+  handleRemoveLabel = async (labelToRemove) => {
+    await MessageAPI.patch({messageIds: this.getSelectedIds(), command: "removeLabel", label: labelToRemove})
     this.updateState()
   }
 
@@ -119,7 +142,6 @@ class App extends Component {
   handleComposeMessage = async (event) => {
     const {subject, body} = event.target
     event.preventDefault();
-    console.log(subject.value, body.value)
     await MessageAPI.post({subject: subject.value, body: body.value})
     this.updateState()
     this.setState({ composeFormDisplayed: false })
@@ -127,22 +149,14 @@ class App extends Component {
 
   // Render
   render() {
-    const selectedMessages = (this.state.messages ?
-      this.state.messages.filter(message => message.selected) :
-      this.state.messages)
-    const unreadMessages = (this.state.messages ?
-      this.state.messages.filter(message => !message.read) :
-      this.state.messages)
-    console.log(this.state)
     return (
       <div className="App">
         <div className="container">
           <Toolbar
-            selectedMessages={selectedMessages}
-            unreadMessages={unreadMessages}
-            messagesData={this.state.messages}
+            getUnreadMessages={this.getUnreadMessages}
             handleComposeFormToggle={this.handleComposeFormToggle}
             handleSelectAll={this.handleSelectAll}
+            amountOfSelectedMessages={this.amountOfSelectedMessages}
             handleReadSelected={this.handleReadSelected}
             handleUnreadSelected={this.handleUnreadSelected}
             handleDeleteSelected={this.handleDeleteSelected}

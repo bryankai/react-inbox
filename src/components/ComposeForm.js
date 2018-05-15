@@ -1,7 +1,5 @@
-// 1. import React
 import React from 'react'
 
-// 2. Create a function
 const ComposeForm = ({handleComposeMessage}) => {
   return (
     <form
@@ -34,6 +32,4 @@ const ComposeForm = ({handleComposeMessage}) => {
   )
 }
 
-
-// 4. export
 export default ComposeForm
