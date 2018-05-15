@@ -96,33 +96,16 @@ class App extends Component {
   }
 
   // Need to add API routes
-  handleApplyLabel = (selectedlabel) => {
-    const newMessagesData = this.state.messages.map((message)=> {
-      if(message.selected)
-        // If the selected message does not have the label, add it
-        if(!message.labels.some((label)=> label===selectedlabel)) {
-          message.labels = [...message.labels, selectedlabel]
-        }
-      return message
-    })
-    this.setState({
-      messages: newMessagesData
-    })
+  handleApplyLabel = async (selectedMessages, selectedLabel) => {
+    const selectedIds = selectedMessages.map(message => message.id)
+    await MessageAPI.patch({messageIds:selectedIds, command: "addLabel", label: selectedLabel})
+    this.updateState()
   }
   // Need to add API routes
-  handleRemoveLabel = (labelToRemove) => {
-    const newMessagesData = this.state.messages.map((message)=> {
-      if(message.selected) {
-        // If message has the label, then remove the label
-        const newLabels = message.labels.filter(label => {
-          return label !== labelToRemove})
-        message.labels = newLabels
-      }
-      return message
-    })
-    this.setState({
-      messages: newMessagesData
-    })
+  handleRemoveLabel = async (selectedMessages, labelToRemove) => {
+    const selectedIds = selectedMessages.map(message => message.id)
+    await MessageAPI.patch({messageIds:selectedIds, command: "removeLabel", label: labelToRemove})
+    this.updateState()
   }
 
   // Create a new message

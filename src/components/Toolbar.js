@@ -49,7 +49,7 @@ const Toolbar = ({
         <select
           className="form-control label-select"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}
-          onChange = {(event)=> handleApplyLabel(event.target.value)}
+          onChange = {(event)=> handleApplyLabel(selectedMessages, event.target.value)}
         >
           <option>Apply label</option>
           <option value="dev">dev</option>
@@ -60,7 +60,7 @@ const Toolbar = ({
         <select
           className="form-control label-select"
           disabled = {selectedMessages.length===0 ? 'disabled' : false}
-          onChange = {(event)=> handleRemoveLabel(event.target.value)}
+          onChange = {(event)=> handleRemoveLabel(selectedMessages, event.target.value)}
         >
           <option>Remove label</option>
           <option value="dev">dev</option>
